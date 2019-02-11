@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/efureev/cache.svg?branch=master)](https://travis-ci.org/efureev/cache)
+[![Maintainability](https://api.codeclimate.com/v1/badges/baa3f34d41f82f4510ce/maintainability)](https://codeclimate.com/github/efureev/cache/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/baa3f34d41f82f4510ce/test_coverage)](https://codeclimate.com/github/efureev/cache/test_coverage)
+
+
 # cache
 
 cache is an in-memory key:value store/cache for applications running on a single machine. 
