@@ -1,11 +1,11 @@
 package cache
 
 import (
-	"testing"
-	"time"
-	"sync"
 	"runtime"
 	"strconv"
+	"sync"
+	"testing"
+	"time"
 )
 
 func TestCache(t *testing.T) {
@@ -100,12 +100,12 @@ func TestCacheTimes(t *testing.T) {
 
 func TestNewFrom(t *testing.T) {
 	m := map[string]Item{
-		"a": Item{
+		"a": {
 			Value:      1,
 			Created:    time.Now(),
 			Expiration: 0,
 		},
-		"b": Item{
+		"b": {
 			Value:      2,
 			Created:    time.Now(),
 			Expiration: 0,

@@ -1,9 +1,9 @@
 package cache
 
 import (
+	"runtime"
 	"sync"
 	"time"
-	"runtime"
 )
 
 const (
@@ -25,27 +25,6 @@ type Item struct {
 	Expiration int64
 }
 
-/*
-func (c *Cache) StartGC() {
-	go c.GC()
-}
-*/
-/*
-func (c *Cache) GC() {
-
-	for {
-		<-time.After(c.cleanupInterval)
-
-		if c.items == nil || len(c.items) == 0 {
-			return
-		}
-
-		if keys := c.expiredKeys(); len(keys) != 0 {
-			c.clearItems(keys)
-		}
-	}
-}
-*/
 func (c *Cache) expiredKeys() (keys []string) {
 	for k, i := range c.items {
 		if i.Expiration > 0 && time.Now().UnixNano() > i.Expiration {
