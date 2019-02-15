@@ -7,10 +7,14 @@ import (
 )
 
 const (
-	NoExpiration      time.Duration = -1
+	// NoExpiration - without Expiration
+	NoExpiration time.Duration = -1
+
+	// DefaultExpiration - 0
 	DefaultExpiration time.Duration = 0
 )
 
+// Cache struct
 type Cache struct {
 	sync.RWMutex
 	defaultExpiration time.Duration // продолжительность жизни кеша по-умолчанию
@@ -19,6 +23,7 @@ type Cache struct {
 	cg                *cg
 }
 
+// Item struct
 type Item struct {
 	Value      interface{}
 	Created    time.Time
@@ -35,6 +40,7 @@ func (c *Cache) expiredKeys() (keys []string) {
 	return keys
 }
 
+// DeleteExpired delete expired items
 func (c *Cache) DeleteExpired() {
 
 	c.Lock()
@@ -55,6 +61,7 @@ func (c *Cache) clearItems(keys []string) {
 	}
 }
 
+// Set item to list by key
 func (c *Cache) Set(key string, value interface{}, duration time.Duration) {
 
 	var expiration int64
@@ -80,6 +87,7 @@ func (c *Cache) Set(key string, value interface{}, duration time.Duration) {
 	c.Unlock()
 }
 
+// Get item by key
 func (c *Cache) Get(key string) (interface{}, bool) {
 	c.RLock()
 	defer c.RUnlock()
@@ -99,11 +107,12 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 	return item.Value, true
 }
 
+// Delete item by key
 func (c *Cache) Delete(key string) error {
 	c.Lock()
 
 	if _, found := c.items[key]; !found {
-		return notFound
+		return errNotFound
 	}
 
 	delete(c.items, key)
@@ -113,6 +122,7 @@ func (c *Cache) Delete(key string) error {
 	return nil
 }
 
+// Count items
 func (c *Cache) Count() int {
 	c.RLock()
 	n := len(c.items)
@@ -120,6 +130,7 @@ func (c *Cache) Count() int {
 	return n
 }
 
+// Flush clear items
 func (c *Cache) Flush() {
 	c.Lock()
 	c.items = map[string]Item{}
@@ -140,10 +151,12 @@ func newCacheWithCG(defaultExpiration, cleanupInterval time.Duration, items map[
 	return &cache
 }
 
+// New create new instance
 func New(defaultExpiration, cleanupInterval time.Duration) *Cache {
 	return newCacheWithCG(defaultExpiration, cleanupInterval, make(map[string]Item))
 }
 
+// NewFrom create new instance from item list
 func NewFrom(defaultExpiration, cleanupInterval time.Duration, items map[string]Item) *Cache {
 	return newCacheWithCG(defaultExpiration, cleanupInterval, items)
 }

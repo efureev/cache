@@ -336,12 +336,12 @@ func benchmarkCacheGetManyConcurrent(b *testing.B, exp time.Duration) {
 	wg := new(sync.WaitGroup)
 	wg.Add(n)
 	for _, v := range keys {
-		go func() {
+		go func(v string) {
 			for j := 0; j < each; j++ {
 				tc.Get(v)
 			}
 			wg.Done()
-		}()
+		}(v)
 	}
 	b.StartTimer()
 	wg.Wait()
