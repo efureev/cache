@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/fcf7f843772443d49541eeef28b93397)](https://app.codacy.com/app/efureev/cache?utm_source=github.com&utm_medium=referral&utm_content=efureev/cache&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/efureev/cache.svg?branch=master)](https://travis-ci.org/efureev/cache)
 [![Maintainability](https://api.codeclimate.com/v1/badges/baa3f34d41f82f4510ce/maintainability)](https://codeclimate.com/github/efureev/cache/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/baa3f34d41f82f4510ce/test_coverage)](https://codeclimate.com/github/efureev/cache/test_coverage)
