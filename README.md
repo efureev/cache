@@ -16,7 +16,7 @@ safely used by multiple goroutines.
 
 ### Installation
 
-`go get -u github.com/efureev/cache/v1`
+`go get -u github.com/efureev/cache`
 
 ### Usage
 
