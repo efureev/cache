@@ -16,7 +16,7 @@ safely used by multiple goroutines.
 
 ### Installation
 
-`go get -u github.com/efureev/cache`
+`go get -u github.com/efureev/cache/v2`
 
 ### Usage
 
@@ -24,7 +24,7 @@ safely used by multiple goroutines.
 package main
 import (
 	"fmt"
-	"github.com/efureev/cache"
+	"github.com/efureev/cache/v2"
 	"time"
 )
 
@@ -35,11 +35,14 @@ func main() {
 
 	// Set the value of the key "foo" to "bar", with the default expiration time
 	c.Set("foo", "bar", cache.DefaultExpiration)
+	c.Set(333, "bar", cache.DefaultExpiration)
+	pnt = true
+	c.Set(&pnt, "bar", cache.DefaultExpiration)
 
 	// Set the value of the key "baz" to 42, with no expiration time
 	// (the item won't be removed until it is re-set, or removed using
 	// c.Delete("baz")
-	c.Set("baz", 42, cache.NoExpiration)
+	c.Set(333, 42, cache.NoExpiration)
 
 	// Get the string associated with the key "foo" from the cache
 	foo, found := c.Get("foo")

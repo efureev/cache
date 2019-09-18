@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestCache(t *testing.T) {
+func TestCacheString(t *testing.T) {
 	tc := New(DefaultExpiration, 0)
 	a, found := tc.Get("a")
 	if found || a != nil {
@@ -60,6 +60,102 @@ func TestCache(t *testing.T) {
 	}
 }
 
+func TestCacheInt(t *testing.T) {
+	tc := New(DefaultExpiration, 0)
+	a, found := tc.Get(12)
+	if found || a != nil {
+		t.Error("Getting A found value that shouldn't exist:", a)
+	}
+
+	b, found := tc.Get(1)
+	if found || b != nil {
+		t.Error("Getting B found value that shouldn't exist:", b)
+	}
+
+	c, found := tc.Get(2)
+	if found || c != nil {
+		t.Error("Getting C found value that shouldn't exist:", c)
+	}
+
+	tc.Set(1, 1, DefaultExpiration)
+	tc.Set(2, "b", DefaultExpiration)
+	tc.Set(3, 3.5, DefaultExpiration)
+
+	x, found := tc.Get(1)
+	if !found {
+		t.Error("a was not found while getting a2")
+	}
+	if x == nil {
+		t.Error("x for a is nil")
+	} else if a2 := x.(int); a2+2 != 3 {
+		t.Error("a2 (which should be 1) plus 2 does not equal 3; value:", a2)
+	}
+
+	x, found = tc.Get(2)
+	if !found {
+		t.Error("b was not found while getting b2")
+	}
+	if x == nil {
+		t.Error("x for b is nil")
+	} else if b2 := x.(string); b2+"B" != "bB" {
+		t.Error("b2 (which should be b) plus B does not equal bB; value:", b2)
+	}
+
+	x, found = tc.Get(3)
+	if !found {
+		t.Error("c was not found while getting c2")
+	}
+	if x == nil {
+		t.Error("x for c is nil")
+	} else if c2 := x.(float64); c2+1.2 != 4.7 {
+		t.Error("c2 (which should be 3.5) plus 1.2 does not equal 4.7; value:", c2)
+	}
+}
+
+func TestCacheStruct(t *testing.T) {
+	type str struct {
+		Id int
+	}
+
+	var s10 = &str{10}
+	var s1 = &str{1}
+
+	tc := New(DefaultExpiration, 0)
+	a, found := tc.Get(s10)
+	if found || a != nil {
+		t.Error("Getting S10 found value that shouldn't exist:", s10)
+	}
+
+	b, found := tc.Get(s1)
+	if found || b != nil {
+		t.Error("Getting S1 found value that shouldn't exist:", s1)
+	}
+
+	tc.Set(s10, 100, DefaultExpiration)
+	tc.Set(s1, true, DefaultExpiration)
+
+	x, found := tc.Get(s10)
+	if !found {
+		t.Error("s10 was not found while getting a2")
+	}
+
+	if x == nil {
+		t.Error("x for a is nil")
+	} else if a2 := x.(int); a2+2 != 102 {
+		t.Error("a2 (which should be 100) plus 2 does not equal 102; value:", a2)
+	}
+
+	x, found = tc.Get(s1)
+	if !found {
+		t.Error("b was not found while getting b2")
+	}
+	if x == nil {
+		t.Error("x for b is nil")
+	} else if b2 := x.(bool); !b2 {
+		t.Error("b2 (which should be true) does not equal False; value:", b2)
+	}
+}
+
 func TestCacheTimes(t *testing.T) {
 	var found bool
 
@@ -99,7 +195,7 @@ func TestCacheTimes(t *testing.T) {
 }
 
 func TestNewFrom(t *testing.T) {
-	m := map[string]Item{
+	m := map[interface{}]Item{
 		"a": {
 			Value:      1,
 			Created:    time.Now(),

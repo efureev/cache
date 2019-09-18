@@ -19,7 +19,7 @@ type Cache struct {
 	sync.RWMutex
 	defaultExpiration time.Duration // продолжительность жизни кеша по-умолчанию
 	cleanupInterval   time.Duration // интервал, через который запускается механизм очистки кеша
-	items             map[string]Item
+	items             map[interface{}]Item
 	cg                *cg
 }
 
@@ -30,7 +30,7 @@ type Item struct {
 	Expiration int64
 }
 
-func (c *Cache) expiredKeys() (keys []string) {
+func (c *Cache) expiredKeys() (keys []interface{}) {
 	for k, i := range c.items {
 		if i.Expiration > 0 && time.Now().UnixNano() > i.Expiration {
 			keys = append(keys, k)
@@ -55,14 +55,14 @@ func (c *Cache) DeleteExpired() {
 	}
 }
 
-func (c *Cache) clearItems(keys []string) {
+func (c *Cache) clearItems(keys []interface{}) {
 	for _, k := range keys {
 		delete(c.items, k)
 	}
 }
 
 // Set item to list by key
-func (c *Cache) Set(key string, value interface{}, duration time.Duration) {
+func (c *Cache) Set(key interface{}, value interface{}, duration time.Duration) {
 
 	var expiration int64
 
@@ -88,7 +88,7 @@ func (c *Cache) Set(key string, value interface{}, duration time.Duration) {
 }
 
 // Get item by key
-func (c *Cache) Get(key string) (interface{}, bool) {
+func (c *Cache) Get(key interface{}) (interface{}, bool) {
 	c.RLock()
 	defer c.RUnlock()
 
@@ -108,7 +108,7 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 }
 
 // Delete item by key
-func (c *Cache) Delete(key string) error {
+func (c *Cache) Delete(key interface{}) error {
 	c.Lock()
 
 	if _, found := c.items[key]; !found {
@@ -133,11 +133,11 @@ func (c *Cache) Count() int {
 // Flush clear items
 func (c *Cache) Flush() {
 	c.Lock()
-	c.items = map[string]Item{}
+	c.items = map[interface{}]Item{}
 	c.Unlock()
 }
 
-func newCacheWithCG(defaultExpiration, cleanupInterval time.Duration, items map[string]Item) *Cache {
+func newCacheWithCG(defaultExpiration, cleanupInterval time.Duration, items map[interface{}]Item) *Cache {
 	cache := Cache{
 		items:             items,
 		defaultExpiration: defaultExpiration,
@@ -153,10 +153,10 @@ func newCacheWithCG(defaultExpiration, cleanupInterval time.Duration, items map[
 
 // New create new instance
 func New(defaultExpiration, cleanupInterval time.Duration) *Cache {
-	return newCacheWithCG(defaultExpiration, cleanupInterval, make(map[string]Item))
+	return newCacheWithCG(defaultExpiration, cleanupInterval, make(map[interface{}]Item))
 }
 
 // NewFrom create new instance from item list
-func NewFrom(defaultExpiration, cleanupInterval time.Duration, items map[string]Item) *Cache {
+func NewFrom(defaultExpiration, cleanupInterval time.Duration, items map[interface{}]Item) *Cache {
 	return newCacheWithCG(defaultExpiration, cleanupInterval, items)
 }
