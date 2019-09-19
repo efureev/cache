@@ -112,6 +112,7 @@ func (c *Cache) Delete(key interface{}) error {
 	c.Lock()
 
 	if _, found := c.items[key]; !found {
+		c.Unlock()
 		return errNotFound
 	}
 

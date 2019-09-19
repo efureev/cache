@@ -251,14 +251,31 @@ func TestStorePointerToStruct(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	tc := New(DefaultExpiration, 0)
-	tc.Set("foo", "bar", DefaultExpiration)
-	tc.Delete("foo")
-	x, found := tc.Get("foo")
-	if found {
-		t.Error("foo was found, but it should have been deleted")
+	list := map[interface{}]interface{}{
+		1:    111,
+		`k`:  `val`,
+		true: false,
 	}
-	if x != nil {
-		t.Error("x is not nil:", x)
+
+	for k, v := range list {
+		go func(k, v interface{}) {
+			tc.Set(k, v, DefaultExpiration)
+			if _, found := tc.Get(k); !found {
+				t.Error("val was not found")
+			}
+
+			tc.Delete(k)
+			x, found := tc.Get(k)
+			if found {
+				t.Error("val was found, but it should have been deleted")
+			}
+			if x != nil {
+				t.Error("x is not nil:", x)
+			}
+
+			tc.Delete(k)
+		}(k, v)
+
 	}
 }
 
